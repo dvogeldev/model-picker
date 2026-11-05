@@ -1,0 +1,6 @@
+[Unit]
+Description=Model picker: daily catalog ingestion + context assignment refresh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/.agents/skills/model-picker/scripts/refresh_assignments.py

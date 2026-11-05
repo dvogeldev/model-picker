@@ -1,0 +1,38 @@
+{
+  "$comment": "Context -> model map for /set-model. model = provider/model-id (nous-portal uses OpenRouter-style ids). thinking = pi thinking level (off|minimal|low|medium|high|xhigh|max, clamped to model support). The model-picker skill maintains this file from live catalog reviews.",
+  "deep-research": {
+    "model": "nous-portal/moonshotai/kimi-k3.1-pro",
+    "thinking": "high",
+    "note": "long-context specialist \u2014 deep research, whole books/codebases"
+  },
+  "coding": {
+    "model": "nous-portal/z-ai/glm-5.3",
+    "thinking": "high",
+    "note": "coding workhorse"
+  },
+  "reasoning": {
+    "model": "nous-portal/deepseek/deepseek-v4-pro-0813",
+    "thinking": "medium",
+    "note": "hard reasoning \u2014 math, proof-style logic"
+  },
+  "image-generation": {
+    "model": "nous-portal/qwen/qwen3.8-max-prime",
+    "thinking": "high",
+    "note": "vision flagship for the conversation; image generation runs via codemode models.generateImages()"
+  },
+  "routing": {
+    "model": "nous-portal/minimax/minimax-m3.1-flash",
+    "thinking": "medium",
+    "note": "cheap agentic routing / dispatch"
+  },
+  "fast": {
+    "model": "nous-portal/inclusionai/ling-3.0-flash",
+    "thinking": "low",
+    "note": "cheap quick work, high volume"
+  },
+  "general": {
+    "model": "nous-portal/z-ai/glm-5.3",
+    "thinking": "high",
+    "note": "default general assistant"
+  }
+}

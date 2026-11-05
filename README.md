@@ -16,6 +16,8 @@ instead of researching model cards at midnight.
   promotions.
 - **A `/set-model` command in pi** — `/set-model coding` switches the
   conversation to the standing coding model in one step.
+- **Context agents in opencode** — the same seven contexts appear as
+  opencode agents. Tab-switch to one, or dispatch it by name.
 - **A daily refresh** (a systemd timer at 06:30) that re-ingests both
   catalogs. It keeps the standing assignments current. You get the newest Kimi
   for deep research, the newest MiniMax flash for routing, and so on.
@@ -40,7 +42,9 @@ git clone git@github.com:dvogeldev/model-picker.git ~/projects/model-picker
 ~/projects/model-picker/install.sh
 ```
 
-The installer links the repo into every harness that reads skills: `~/.agents`, `~/.hermes`, `~/.grok`. It also installs the pi extension and enables the daily timer. Safe to run again.
+The installer links the repo into every harness that reads skills: `~/.agents`, `~/.hermes`, `~/.grok`, `~/.config/opencode`. It installs the pi extension, merges the opencode provider and context agents, and enables the daily timer. Safe to run again.
+
+Your keys stay in `pass`. The installer wires `NOUS_API_KEY` into fish and bash startup from your pass store (entry `nous/NOUS_API_KEY`). The snippets name only the pass entry — never a key. No key lands in a config file. Nothing is committed to this repo.
 
 ## The standing map
 

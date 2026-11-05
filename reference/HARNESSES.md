@@ -69,17 +69,30 @@ model creates images.
 
 ## opencode (`~/.config/opencode`)
 
-- `/models` — built-in model picker for the session.
-- `opencode.json` — per-agent models and custom providers. The file is
-  empty on this machine. An agent entry like `{ "model": ... }` pins a
-  model per agent type. That entry is the opencode analogue of the context
-  map.
+- Skills: opencode reads `~/.config/opencode/skills`. `install.sh` links
+  model-picker there.
+- Auth: the provider reads `{env:NOUS_API_KEY}`. The key comes from
+  pass, entry `nous/NOUS_API_KEY`. `install.sh` installs a fish snippet
+  in `~/.config/fish/conf.d/` and a guarded block in `~/.bashrc`. Each
+  snippet names only the pass entry. No key is stored in a file. No key
+  is committed to this repo.
+- Provider and agents: `~/.config/opencode/opencode.json` holds the
+  `nous-portal` provider (OpenAI-compatible, Nous inference API). The
+  file also holds one agent per context: deep-research, coding, reasoning,
+  image-generation, routing, fast, general. Switch agents with the Tab
+  cycle. Dispatch a context as a subagent by name. That is the opencode
+  equivalent of `/set-model`.
+- Daily sync: `refresh_assignments.py` updates only agent entries with
+  `x-model-picker` true. The sync never touches a user-defined agent.
+  The provider model list gains any model id the map starts to use.
+- `/models` — the built-in model picker still works inside a session.
 
 ## Compliance across the primary surfaces
 
 | Surface | Kind | Skill loads from | Model setting | Standing map applies |
 |---|---|---|---|---|
 | pi | agent harness | `~/.agents/skills/model-picker` | `/set-model <context>` | yes |
+| opencode | agent harness | `~/.config/opencode/skills` | context agents (Tab cycle, subagent dispatch) | yes (daily sync) |
 | hermes | agent gateway | `~/.hermes/skills/model-picker` | `/model <model>` | yes |
 | grok | agent CLI | `~/.grok/skills/model-picker` | `~/.grok/config.toml` `[models]` | no (xAI models only) |
 | herdr | multiplexer | inherited from the agent in the pane | none of its own | via the agent |

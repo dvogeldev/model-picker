@@ -1,0 +1,110 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "nous-portal": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Nous Portal",
+      "options": {
+        "baseURL": "https://inference-api.nousresearch.com/v1",
+        "apiKey": "{env:NOUS_API_KEY}"
+      },
+      "models": {
+        "moonshotai/kimi-k3.1-pro": {
+          "name": "Kimi K3.1 Pro",
+          "limit": { "context": 1048576, "output": 943718 },
+          "reasoning": true,
+          "tool_call": true,
+          "attachment": true
+        },
+        "z-ai/glm-5.3": {
+          "name": "GLM-5.3",
+          "limit": { "context": 1048576, "output": 131072 },
+          "reasoning": true,
+          "tool_call": true
+        },
+        "deepseek/deepseek-v4-pro-0813": {
+          "name": "DeepSeek V4 Pro 0813",
+          "limit": { "context": 1048576, "output": 393216 },
+          "tool_call": true
+        },
+        "qwen/qwen3.8-max-prime": {
+          "name": "Qwen3.8 Max Prime",
+          "limit": { "context": 1000000, "output": 131072 },
+          "reasoning": true,
+          "tool_call": true,
+          "attachment": true
+        },
+        "minimax/minimax-m3.1-flash": {
+          "name": "MiniMax M3.1 Flash",
+          "limit": { "context": 1048576, "output": 524288 },
+          "tool_call": true,
+          "attachment": true
+        },
+        "inclusionai/ling-3.0-flash": {
+          "name": "Ling 3.0 Flash",
+          "limit": { "context": 262144, "output": 32768 },
+          "reasoning": true,
+          "tool_call": true
+        },
+        "z-ai/glm-5.3-flash": {
+          "name": "GLM-5.3 Flash",
+          "limit": { "context": 1048576, "output": 131072 },
+          "reasoning": true,
+          "tool_call": true,
+          "attachment": true
+        }
+      }
+    }
+  },
+  "agent": {
+    "deep-research": {
+      "description": "Deep research and long documents.",
+      "mode": "all",
+      "model": "nous-portal/moonshotai/kimi-k3.1-pro",
+      "prompt": "Work through large document sets. Read everything relevant before you answer.",
+      "x-model-picker": true
+    },
+    "coding": {
+      "description": "Coding and software work.",
+      "mode": "all",
+      "model": "nous-portal/z-ai/glm-5.3",
+      "prompt": "Write, change, and review code.",
+      "x-model-picker": true
+    },
+    "reasoning": {
+      "description": "Hard reasoning, math, formal logic.",
+      "mode": "all",
+      "model": "nous-portal/deepseek/deepseek-v4-pro-0813",
+      "prompt": "Reason step by step. Check your logic before you answer.",
+      "x-model-picker": true
+    },
+    "image-generation": {
+      "description": "Conversations about images. Reads images; generation uses image models.",
+      "mode": "all",
+      "model": "nous-portal/qwen/qwen3.8-max-prime",
+      "prompt": "Read and discuss images. State clearly when an image must be created.",
+      "x-model-picker": true
+    },
+    "routing": {
+      "description": "Cheap agent dispatch and tool routing.",
+      "mode": "all",
+      "model": "nous-portal/minimax/minimax-m3.1-flash",
+      "prompt": "Dispatch tool calls and short subtasks at low cost.",
+      "x-model-picker": true
+    },
+    "fast": {
+      "description": "High-volume, low-cost work.",
+      "mode": "all",
+      "model": "nous-portal/inclusionai/ling-3.0-flash",
+      "prompt": "Answer fast and cheap. Keep responses short.",
+      "x-model-picker": true
+    },
+    "general": {
+      "description": "Everyday general assistant.",
+      "mode": "all",
+      "model": "nous-portal/z-ai/glm-5.3",
+      "prompt": "Answer everyday questions well.",
+      "x-model-picker": true
+    }
+  }
+}

@@ -25,6 +25,7 @@ file that the decision needs.
 | The workflow when a user asks for a model | `SKILL.md` |
 | How the daily refresh runs | `systemd/model-picker-refresh.timer`, `systemd/model-picker-refresh.service` |
 | The pi `/set-model` command | `extensions/set-model.ts` |
+| The opencode context agents | `config/opencode.json` (marker: `x-model-picker`, installed at `~/.config/opencode/opencode.json`) |
 | How to install on a new machine | `install.sh` |
 
 ## Standing context map
@@ -70,6 +71,9 @@ scripts/refresh_assignments.py"]
   `scripts/refresh_assignments.py`. Then run the script once. Do not
   hand-edit `config/set-model.json`: the next daily run overwrites a
   hand edit.
+- The daily refresh also syncs the opencode context agents. The sync
+  touches only agent entries with `x-model-picker` true. The sync adds a
+  missing model id to the opencode provider model list.
 - To freeze one context, set `"lock": true` on its entry in
   `~/.pi/agent/set-model.json`. The daily refresh then leaves the context
   alone. A locked context keeps its model until a person removes the lock.

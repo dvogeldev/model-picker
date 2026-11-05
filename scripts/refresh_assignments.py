@@ -28,6 +28,7 @@ from model_picker import OPENROUTER, fetch, merge  # noqa: E402
 AGENT_DIR = os.environ.get("PI_CODING_AGENT_DIR") or os.path.expanduser("~/.pi/agent")
 ASSIGNMENTS_PATH = os.path.join(AGENT_DIR, "set-model.json")
 REPORT_PATH = os.path.expanduser("~/.cache/model-picker/assignments-report.md")
+OPENCODE_CONFIG = os.path.expanduser("~/.config/opencode/opencode.json")
 
 JUNK_ID = re.compile(r"^(~)|:(free|batch|extended|US|EU|anchor|nitro)$")
 PREVIEW_ID = re.compile(r"preview|exp$|-vision", re.I)
@@ -95,6 +96,65 @@ def compute_assignments(fresh: bool = True) -> dict[str, str]:
     return {k: f"nous-portal/{v}" for k, v in picks.items() if v}
 
 
+def sync_opencode(picks: dict[str, str], changes: list[str], dry: bool) -> None:
+    """Update the marker-scoped OpenCode agents from the standing map.
+
+    Only agent entries with x-model-picker true are touched. The provider
+    model list gains any model id the map now uses. User-defined config is
+    never modified.
+    """
+    if not os.path.exists(OPENCODE_CONFIG):
+        return
+    try:
+        with open(OPENCODE_CONFIG) as f:
+            cfg = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return
+    agents = cfg.get("agent")
+    if not isinstance(agents, dict):
+        return
+
+    changed = False
+    for ctx, model in picks.items():
+        entry = agents.get(ctx)
+        if not isinstance(entry, dict) or not entry.get("x-model-picker"):
+            continue
+        if entry.get("model") == model:
+            changes.append(f"- opencode/{ctx}: {model} (unchanged)")
+            continue
+        entry["model"] = model
+        changed = True
+        changes.append(f"- opencode/{ctx}: → {model}")
+
+    # The provider must declare any model id the map now uses.
+    provider = cfg.get("provider", {}).get("nous-portal", {})
+    declared = provider.setdefault("models", {}) if isinstance(provider, dict) else {}
+    raw = {m["id"]: m for m in fetch("https://inference-api.nousresearch.com/v1/models", False)}
+    for model in picks.values():
+        mid = model.split("/", 1)[1]
+        if mid in declared or mid not in raw:
+            continue
+        m = raw[mid]
+        tp = m.get("top_provider") or {}
+        arch = m.get("architecture") or {}
+        declared[mid] = {
+            "name": mid,
+            "limit": {"context": m.get("context_length") or 131072,
+                      "output": tp.get("max_completion_tokens") or 32768},
+            "tool_call": "tools" in (m.get("supported_parameters") or []),
+            "attachment": "image" in (arch.get("input_modalities") or []),
+        }
+        if (m.get("reasoning") or {}).get("default_enabled"):
+            declared[mid]["reasoning"] = True
+        changed = True
+        changes.append(f"- opencode provider models: + {mid}")
+
+    if changed and not dry:
+        with open(OPENCODE_CONFIG, "w") as f:
+            json.dump(cfg, f, indent=2)
+            f.write("\n")
+
+
 def main():
     dry = "--dry-run" in sys.argv
     picks = compute_assignments(fresh=not os.environ.get("REFRESH_SKIP_FETCH"))
@@ -135,15 +195,18 @@ def main():
         changes.append(f"- {ctx}: {old_model or 'none'} → {model} ({reasons.get(ctx, 'policy')})")
 
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
-    report = f"# Model assignment refresh — {ts}\n\n" + "\n".join(changes) + "\n"
-    os.makedirs(os.path.dirname(REPORT_PATH), exist_ok=True)
-    with open(REPORT_PATH, "w") as f:
-        f.write(report)
 
     if not dry:
         with open(ASSIGNMENTS_PATH, "w") as f:
             json.dump(updated, f, indent=2)
             f.write("\n")
+
+    sync_opencode(picks, changes, dry)
+
+    # Rebuild the report after sync_opencode: its lines land in the report too.
+    report = f"# Model assignment refresh — {ts}\n\n" + "\n".join(changes) + "\n"
+    with open(REPORT_PATH, "w") as f:
+        f.write(report)
 
     print(report)
     changed = sum(1 for c in changes if "→" in c)

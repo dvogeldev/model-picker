@@ -20,6 +20,19 @@ instead of researching model cards at midnight.
   catalogs. It keeps the standing assignments current. You get the newest Kimi
   for deep research, the newest MiniMax flash for routing, and so on.
 
+## How it fits together
+
+```mermaid
+flowchart TD
+    CAT["Nous Portal + OpenRouter catalogs"] -->|"daily timer, 06:30"| REF["refresh_assignments.py"]
+    REF --> MAP["set-model.json — the standing map"]
+    REF --> CACHE["catalog cache, 24 h"]
+    MAP --> CMD["/set-model coding — in pi"]
+    CMD --> SESSION["conversation model + thinking level"]
+    ASK["'which model for X?' — any agent, on demand"] --> PICK["model_picker.py"]
+    PICK --> CACHE
+```
+
 ## Install
 
 ```bash

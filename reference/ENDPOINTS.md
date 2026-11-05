@@ -33,6 +33,21 @@ The API accepts only these categories.
 
 ## Ingestion cadence
 
+```mermaid
+flowchart LR
+    T["systemd timer
+06:30 daily"] --> R[refresh_assignments.py]
+    N["Nous catalog
+inference-api.nousresearch.com"] --> R
+    O["OpenRouter catalog
++ category rankings"] --> R
+    R --> C["catalog cache, 24 h
+~/.cache/model-picker"]
+    R --> M["set-model.json
+the standing map"]
+    R --> W[assignments-report.md]
+```
+
 The picker script fetches catalog data once a day and caches responses
 for 24 h in `~/.cache/model-picker/`. The systemd user timer
 `model-picker-refresh.timer` warms the cache daily at 06:30

@@ -42,6 +42,28 @@ this map through these rules.
 | fast | Cheapest value tier with long-context and agentic support on the Nous Portal |
 | general | Newest Z.ai GLM flagship (non-flash) |
 
+## Change routing
+
+```mermaid
+flowchart TD
+    Q[Change request] --> K{What changes?}
+    K -->|standing assignment| R["edit the rule in
+scripts/refresh_assignments.py"]
+    K -->|new context| N["rule in refresh_assignments.py
++ default in config/set-model.json"]
+    K -->|tier or use case| T["reference/TAXONOMY.md
++ classifier in model_picker.py"]
+    K -->|endpoint or promotion signal| E[reference/ENDPOINTS.md]
+    K -->|harness behavior| H[reference/HARNESSES.md]
+    R --> D["run refresh_assignments.py --dry-run"]
+    N --> D
+    D --> G[check the report]
+    G --> C[commit]
+    T --> C
+    E --> C
+    H --> C
+```
+
 ## Change rules
 
 - To change a standing assignment, change the rule in
@@ -71,6 +93,9 @@ This repository splits its docs by audience.
 - `README.md` is human-facing. It uses plain language. Keep the reader's
   task first. Address the reader as "you".
 - Do not merge the two audiences into one file.
+- Use mermaid diagrams for flows and hierarchies. Keep tables for data
+  rows. GitHub renders mermaid for humans. Agents read the diagram source
+  as text. Validate a changed diagram with `mmdc` before you commit.
 
 ## Verified facts
 

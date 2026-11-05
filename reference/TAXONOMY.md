@@ -6,6 +6,22 @@ definitions — change the definitions here, not in the script.
 
 ## Capability tiers
 
+The tier ladder at a glance.
+
+```mermaid
+flowchart TD
+    L[capability tier] --> FR["frontier — flagships of
+Anthropic, OpenAI, X.ai, Google"]
+    FR --> FRV["frontier-value — cheap frontier
+lines, mini-class pricing"]
+    L --> FL["flagship — top tier of
+non-frontier labs"]
+    L --> VA["value — flash, mini,
+lite class of any lab"]
+    L --> SM["small — open models
+up to 32B"]
+```
+
 Vendor groups come first; every model inherits its tier from its vendor and
 name class.
 

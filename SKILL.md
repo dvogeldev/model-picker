@@ -9,18 +9,17 @@ Pick the best LLM for a task. Fetch the live Nous Portal and OpenRouter catalogs
 
 ## Workflow
 
-```
-Start
-  ↓
-1. Intake — map the request to a task category and specialty needs
-  ↓
-2. Fetch — run the picker script against both catalogs (24 h cache)
-  ↓
-3. Rank — read the table; correct heuristic tags against the taxonomy
-  ↓
-4. Recommend — apply the selection policy and the routing defaults
-  ↓
-Done — report: pick + ranked table + promotion callouts
+```mermaid
+flowchart TD
+    S([Start]) --> I["Phase 1: Intake
+category + specialties + mode"]
+    I --> F["Phase 2: Fetch
+run model_picker.py"]
+    F --> R["Phase 3: Rank
+check tags against TAXONOMY.md"]
+    R --> C["Phase 4: Recommend
+apply the selection policy"]
+    C --> E(["Report: pick + table + promotions"])
 ```
 
 ## Phase 1: Intake

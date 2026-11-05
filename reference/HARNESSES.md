@@ -6,6 +6,19 @@ reasoning, image-generation, routing, fast, general.
 
 ## pi (this harness)
 
+```mermaid
+sequenceDiagram
+    participant U as user
+    participant X as /set-model
+    participant M as set-model.json
+    participant P as pi session
+    U->>X: /set-model coding
+    X->>M: read the context map
+    M-->>X: coding = model + thinking level
+    X->>P: setModel(model), setThinkingLevel(level)
+    P-->>U: conversation switched, recorded in the session
+```
+
 **`/set-model <context>`** — registered by `~/.pi/agent/extensions/set-model.ts`.
 Switches the conversation model and thinking level in one step, recorded in
 the session (restored on resume). Reads the context map from

@@ -5,7 +5,10 @@ set -euo pipefail
 
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 1. Skill on the agents' skill path.
+# 1. Skill on every skill-consuming harness path.
+# pi and opencode read ~/.agents/skills. Hermes reads ~/.hermes/skills.
+# Grok reads ~/.grok/skills. Hermes and Grok entries are relative links to
+# the canonical install, so they follow wherever the repo lives.
 mkdir -p ~/.agents/skills
 if [ -e ~/.agents/skills/model-picker ] && [ ! -L ~/.agents/skills/model-picker ]; then
 	echo "ERROR: ~/.agents/skills/model-picker exists and is not a symlink." >&2
@@ -13,6 +16,10 @@ if [ -e ~/.agents/skills/model-picker ] && [ ! -L ~/.agents/skills/model-picker 
 	exit 1
 fi
 ln -sfn "$repo" ~/.agents/skills/model-picker
+for d in ~/.hermes/skills ~/.grok/skills; do
+	mkdir -p "$d"
+	ln -sfn "../../.agents/skills/model-picker" "$d/model-picker"
+done
 
 # 2. pi extension.
 mkdir -p ~/.pi/agent/extensions

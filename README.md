@@ -40,8 +40,7 @@ git clone git@github.com:dvogeldev/model-picker.git ~/projects/model-picker
 ~/projects/model-picker/install.sh
 ```
 
-The installer links the repo into `~/.agents/skills/`, installs the pi
-extension, and enables the daily timer. It's safe to run again.
+The installer links the repo into every harness that reads skills: `~/.agents`, `~/.hermes`, `~/.grok`. It also installs the pi extension and enables the daily timer. Safe to run again.
 
 ## The standing map
 
